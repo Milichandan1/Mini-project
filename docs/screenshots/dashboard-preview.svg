@@ -1,0 +1,36 @@
+<svg width="1440" height="920" viewBox="0 0 1440 920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1440" height="920" fill="#101415"/>
+  <circle cx="198" cy="109" r="280" fill="#45C4A0" fill-opacity="0.16"/>
+  <circle cx="1220" cy="132" r="240" fill="#FF6B5F" fill-opacity="0.13"/>
+  <rect x="64" y="48" width="1312" height="128" rx="8" fill="#18201F" stroke="white" stroke-opacity="0.12"/>
+  <text x="96" y="92" fill="#45C4A0" font-family="Inter, Arial" font-size="16" font-weight="800">NORTHEAST AIR INTELLIGENCE</text>
+  <text x="96" y="134" fill="white" font-family="Inter, Arial" font-size="42" font-weight="900">Pollution command center</text>
+  <rect x="1116" y="86" width="176" height="44" rx="8" fill="white" fill-opacity="0.08" stroke="white" stroke-opacity="0.12"/>
+  <text x="1142" y="114" fill="white" font-family="Inter, Arial" font-size="16">Guwahati</text>
+  <rect x="64" y="204" width="760" height="284" rx="8" fill="#18201F" stroke="white" stroke-opacity="0.12"/>
+  <circle cx="226" cy="346" r="86" stroke="white" stroke-opacity="0.1" stroke-width="18"/>
+  <path d="M226 260a86 86 0 1 1-74 42" stroke="#F3B743" stroke-width="18" stroke-linecap="round"/>
+  <text x="190" y="342" fill="white" font-family="Inter, Arial" font-size="58" font-weight="900">118</text>
+  <text x="198" y="378" fill="#F3B743" font-family="Inter, Arial" font-size="18" font-weight="800">Poor</text>
+  <text x="368" y="304" fill="#45C4A0" font-family="Inter, Arial" font-size="14" font-weight="800">SELECTED CITY</text>
+  <text x="368" y="348" fill="white" font-family="Inter, Arial" font-size="38" font-weight="900">Guwahati, Assam</text>
+  <rect x="368" y="382" width="376" height="70" rx="8" fill="#FF6B5F" fill-opacity="0.1" stroke="#FF6B5F" stroke-opacity="0.35"/>
+  <text x="390" y="425" fill="#F4F7F6" font-family="Inter, Arial" font-size="16">Use a mask near traffic and avoid intense outdoor exercise.</text>
+  <rect x="852" y="204" width="524" height="132" rx="8" fill="#18201F" stroke="white" stroke-opacity="0.12"/>
+  <text x="884" y="250" fill="#B8C7C2" font-family="Inter, Arial" font-size="18">Temperature</text>
+  <text x="884" y="300" fill="white" font-family="Inter, Arial" font-size="44" font-weight="900">29°C</text>
+  <rect x="852" y="356" width="524" height="132" rx="8" fill="#18201F" stroke="white" stroke-opacity="0.12"/>
+  <text x="884" y="402" fill="#B8C7C2" font-family="Inter, Arial" font-size="18">Ventilation</text>
+  <text x="884" y="452" fill="white" font-family="Inter, Arial" font-size="44" font-weight="900">2.4 m/s</text>
+  <rect x="64" y="516" width="644" height="336" rx="8" fill="#18201F" stroke="white" stroke-opacity="0.12"/>
+  <text x="96" y="564" fill="white" font-family="Inter, Arial" font-size="24" font-weight="900">Northeast India map</text>
+  <path d="M158 720 C236 608, 350 645, 452 592 C538 548, 588 626, 572 720 C558 802, 448 806, 370 790 C286 772, 232 822, 158 720Z" fill="#45C4A0" fill-opacity="0.22" stroke="#45C4A0" stroke-width="2"/>
+  <circle cx="310" cy="704" r="16" fill="#F3B743"/>
+  <circle cx="426" cy="664" r="12" fill="#45C4A0"/>
+  <circle cx="512" cy="724" r="13" fill="#FF6B5F"/>
+  <rect x="736" y="516" width="640" height="336" rx="8" fill="#18201F" stroke="white" stroke-opacity="0.12"/>
+  <text x="768" y="564" fill="white" font-family="Inter, Arial" font-size="24" font-weight="900">AI prediction, next 48 hours</text>
+  <path d="M788 760 C864 690, 930 724, 992 672 C1054 620, 1124 676, 1182 642 C1238 608, 1288 640, 1334 584" stroke="#FF6B5F" stroke-width="5" fill="none"/>
+  <line x1="788" y1="804" x2="1334" y2="804" stroke="white" stroke-opacity="0.12"/>
+  <line x1="788" y1="604" x2="788" y2="804" stroke="white" stroke-opacity="0.12"/>
+</svg>
