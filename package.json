@@ -1,16 +1,16 @@
 {
-  "name": "northeast-pollution-monitor",
+  "name": "voyage-travel-website",
   "version": "1.0.0",
   "private": true,
-  "description": "AI-based pollution monitoring dashboard for Northeast India.",
+  "description": "Production-ready travel website with React, Express, MongoDB, JWT auth, bookings, maps, and contact integration.",
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace server\" \"npm run dev --workspace client\"",
     "dev:client": "npm run dev --workspace client",
-    "dev:server": "npm run dev --workspace server",
+    "dev:api": "npm run dev --workspace server",
     "install:all": "npm install --workspaces",
     "build": "npm run build --workspace client",
     "lint": "npm run lint --workspace client",
-    "start": "npm run start --workspace server"
+    "start": "npm start --workspace server"
   },
   "workspaces": [
     "client",

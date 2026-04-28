@@ -5,5 +5,5 @@ import { env } from "./config/env.js";
 await connectDb();
 
 app.listen(env.port, () => {
-  console.log(`API listening on http://localhost:${env.port}/api`);
+  console.log(`Voyage API listening on http://localhost:${env.port}/api`);
 });
