@@ -2,6 +2,10 @@
 
 Voyage is a production-ready travel website built with React, Vite, Tailwind CSS, Framer Motion, Node.js, Express, MongoDB Atlas, and JWT authentication. It includes destination search and filters, animated cards, booking validation, user dashboard, dark/light mode, contact form email integration, SEO metadata, lazy images, loading skeletons, and Google Maps embeds.
 
+## Screenshot
+
+![Voyage travel website homepage](docs/screenshots/voyage-travel-home.png)
+
 ## Folder Structure
 
 ```text
