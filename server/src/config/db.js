@@ -12,7 +12,7 @@ export async function connectDb() {
     console.log("MongoDB connected");
     return true;
   } catch (error) {
-    console.warn("MongoDB unavailable. Persistent auth/bookings require MONGODB_URI:", error.message);
+    console.warn("MongoDB unavailable, continuing with live/fallback data:", error.message);
     return false;
   }
 }

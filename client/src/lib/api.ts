@@ -1,130 +1,140 @@
-import { Booking, ComparisonPoint, Destination, LiveReading, PredictionPoint, TrendPoint, User } from "./types";
+import { ComparisonPoint, LiveReading, PredictionPoint, TrendPoint } from "./types";
+import { cities } from "../data/cities";
 
-const DEFAULT_API_BASE_URL = "/api";
-const API_BASE_URL = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL);
-const REQUEST_TIMEOUT_MS = 10_000;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5000/api";
 
 export class ApiError extends Error {
-  code: "offline" | "timeout" | "http";
-  status?: number;
-
-  constructor(message: string, code: "offline" | "timeout" | "http", status?: number) {
+  constructor(message: string, public status: number) {
     super(message);
     this.name = "ApiError";
-    this.code = code;
-    this.status = status;
   }
 }
 
-function normalizeBaseUrl(baseUrl: string) {
-  const trimmed = baseUrl.trim();
-  return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed;
-}
-
-async function request<T>(path: string, options?: RequestInit & { token?: string }): Promise<T> {
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  const { token, headers, ...restOptions } = options ?? {};
-
-  let response: Response;
-
+async function request<T>(path: string, options?: RequestInit, fallback?: () => T): Promise<T> {
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...headers
-      },
-      ...restOptions,
-      signal: controller.signal
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: { "Content-Type": "application/json" },
+      ...options
     });
-  } catch (error) {
-    window.clearTimeout(timeoutId);
 
-    if (error instanceof DOMException && error.name === "AbortError") {
-      throw new ApiError(
-        "The API is taking too long to respond. Check the backend service or your network and try again.",
-        "timeout"
-      );
+    if (!response.ok) {
+      throw new ApiError(`Request failed: ${response.status}`, response.status);
     }
 
-    throw new ApiError(
-      "API server is not reachable. Start FastAPI with `npm run start` or run `npm run dev` from the project root.",
-      "offline"
-    );
+    return response.json() as Promise<T>;
+  } catch (error) {
+    if (fallback) {
+      return fallback();
+    }
+    throw error;
   }
-
-  window.clearTimeout(timeoutId);
-
-  if (!response.ok) {
-    const message = await readErrorMessage(response);
-    throw new ApiError(message, "http", response.status);
-  }
-
-  return response.json() as Promise<T>;
 }
 
-async function readErrorMessage(response: Response) {
-  try {
-    const payload = (await response.json()) as { detail?: string; message?: string };
-    const message = payload.message ?? payload.detail;
-    if (message) {
-      return `API request failed (${response.status}): ${message}`;
-    }
-  } catch {
-    // Ignore JSON parse failures and fall back to status text.
-  }
+function categoryFromAqi(aqi: number) {
+  if (aqi <= 50) return "Good";
+  if (aqi <= 100) return "Moderate";
+  if (aqi <= 200) return "Poor";
+  if (aqi <= 300) return "Unhealthy";
+  return "Hazardous";
+}
 
-  return `API request failed (${response.status}): ${response.statusText || "Unexpected backend response"}`;
+function citySeed(city: string) {
+  return [...city].reduce((total, letter) => total + letter.charCodeAt(0), 0);
+}
+
+function liveFallback(cityName: string): LiveReading {
+  const city = cities.find((item) => item.name === cityName) ?? cities[0];
+  const seed = citySeed(city.name);
+  const pm25 = 34 + (seed % 56);
+  const pm10 = pm25 + 28 + (seed % 22);
+  const aqi = Math.round(pm25 * 2.3 + (seed % 24));
+
+  return {
+    city,
+    aqi,
+    category: categoryFromAqi(aqi),
+    pollutants: {
+      pm25,
+      pm10,
+      co: Number((0.6 + (seed % 8) / 10).toFixed(1)),
+      no2: 18 + (seed % 30),
+      so2: 6 + (seed % 14)
+    },
+    weather: {
+      temperature: 23 + (seed % 9),
+      humidity: 58 + (seed % 24),
+      windSpeed: Number((1.4 + (seed % 28) / 10).toFixed(1)),
+      condition: seed % 2 === 0 ? "Partly cloudy" : "Hazy"
+    },
+    source: "Vercel demo fallback",
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function trendFallback(cityName: string, range: "weekly" | "monthly"): TrendPoint[] {
+  const live = liveFallback(cityName);
+  const points = range === "weekly" ? 7 : 30;
+  const now = Date.now();
+
+  return Array.from({ length: points }, (_, index) => {
+    const wave = Math.sin(index / 2) * 10;
+    const aqi = Math.max(20, Math.round(live.aqi - points + index * 1.6 + wave));
+
+    return {
+      timestamp: new Date(now - (points - index - 1) * 24 * 60 * 60 * 1000).toISOString(),
+      aqi,
+      pm25: Math.round(aqi / 2.4),
+      pm10: Math.round(aqi / 1.55),
+      temperature: live.weather.temperature + Math.round(Math.sin(index / 3) * 2),
+      humidity: live.weather.humidity + Math.round(Math.cos(index / 3) * 4)
+    };
+  });
+}
+
+function comparisonFallback(): ComparisonPoint[] {
+  return cities.map((city) => {
+    const live = liveFallback(city.name);
+    return {
+      city: city.name,
+      state: city.state,
+      aqi: live.aqi,
+      pm25: live.pollutants.pm25,
+      pm10: live.pollutants.pm10,
+      category: live.category
+    };
+  });
+}
+
+function predictionFallback(reading: LiveReading): PredictionPoint[] {
+  const now = Date.now();
+  return Array.from({ length: 48 }, (_, index) => {
+    const hour = index + 1;
+    const predictedPm25 = Math.max(8, reading.pollutants.pm25 + Math.sin(hour / 4) * 8 - reading.weather.windSpeed * 1.5);
+    return {
+      hour,
+      timestamp: new Date(now + hour * 60 * 60 * 1000).toISOString(),
+      predictedPm25: Number(predictedPm25.toFixed(1)),
+      predictedAqi: Math.round(predictedPm25 * 2.4)
+    };
+  });
 }
 
 export const api = {
-  cities: () => request("/cities"),
-  live: (city: string) => request<LiveReading>(`/aqi/live?city=${encodeURIComponent(city)}`),
+  cities: () => request("/cities", undefined, () => cities),
+  live: (city: string) => request<LiveReading>(`/aqi/live?city=${encodeURIComponent(city)}`, undefined, () => liveFallback(city)),
   trends: (city: string, range: "weekly" | "monthly") =>
-    request<TrendPoint[]>(`/analytics/trends?city=${encodeURIComponent(city)}&range=${range}`),
-  comparison: () => request<ComparisonPoint[]>("/analytics/comparison"),
+    request<TrendPoint[]>(`/analytics/trends?city=${encodeURIComponent(city)}&range=${range}`, undefined, () => trendFallback(city, range)),
+  comparison: () => request<ComparisonPoint[]>("/analytics/comparison", undefined, comparisonFallback),
   predict: (reading: LiveReading) =>
     request<PredictionPoint[]>("/predict", {
       method: "POST",
       body: JSON.stringify({ city: reading.city.name, reading, horizon: 48 })
-    }),
+    }, () => predictionFallback(reading)),
   chat: (question: string, city: string) =>
     request<{ answer: string }>("/chat", {
       method: "POST",
       body: JSON.stringify({ question, city })
-    }),
-  destinations: (params: { search?: string; region?: string; category?: string }) => {
-    const query = new URLSearchParams();
-    if (params.search) query.set("search", params.search);
-    if (params.region) query.set("region", params.region);
-    if (params.category) query.set("category", params.category);
-    return request<{ destinations: Destination[] }>(`/destinations?${query.toString()}`);
-  },
-  register: (payload: { name: string; email: string; password: string }) =>
-    request<{ user: User; token: string }>("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }),
-  login: (payload: { email: string; password: string }) =>
-    request<{ user: User; token: string }>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }),
-  me: (token: string) => request<{ user: User }>("/auth/me", { token }),
-  bookings: (token: string) => request<{ bookings: Booking[] }>("/bookings", { token }),
-  createBooking: (
-    token: string,
-    payload: { destinationId: string; travelDate: string; guests: number; fullName: string; phone: string; notes: string }
-  ) =>
-    request<{ booking: Booking }>("/bookings", {
-      method: "POST",
-      token,
-      body: JSON.stringify(payload)
-    }),
-  contact: (payload: { name: string; email: string; subject: string; message: string }) =>
-    request<{ message: string; email: { sent: boolean; reason?: string } }>("/contact", {
-      method: "POST",
-      body: JSON.stringify(payload)
-    })
+    }, () => ({
+      answer: `${city} is currently using demo air-quality data on Vercel. For ${question.toLowerCase()}, watch PM2.5, wind speed, and the AQI category before planning long outdoor activity.`
+    }))
 };

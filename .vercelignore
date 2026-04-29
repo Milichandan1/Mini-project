@@ -1,0 +1,15 @@
+node_modules
+client/node_modules
+server/node_modules
+ml-service/.venv
+ml-service/venv
+ml-service/model
+ml-service/data
+client/dist
+dist
+build
+*.log
+.dev-jobids
+.dev-pids
+.env
+.env.local

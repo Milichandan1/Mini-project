@@ -1,20 +1,18 @@
 import { Router } from "express";
-import { login, me, register } from "../controllers/authController.js";
-import { createBooking, listMyBookings } from "../controllers/bookingController.js";
-import { createContact } from "../controllers/contactController.js";
-import { listDestinations } from "../controllers/destinationController.js";
-import { requireAuth } from "../middleware/auth.js";
+import { listCities, liveReading } from "../controllers/aqiController.js";
+import { comparison, trends } from "../controllers/analyticsController.js";
+import { chat } from "../controllers/chatController.js";
+import { predict } from "../controllers/predictionController.js";
 
 export const router = Router();
 
 router.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "voyage-travel-api", timestamp: new Date().toISOString() });
+  res.json({ status: "ok", service: "northeast-pollution-api", timestamp: new Date().toISOString() });
 });
 
-router.get("/destinations", listDestinations);
-router.post("/auth/register", register);
-router.post("/auth/login", login);
-router.get("/auth/me", requireAuth, me);
-router.get("/bookings", requireAuth, listMyBookings);
-router.post("/bookings", requireAuth, createBooking);
-router.post("/contact", createContact);
+router.get("/cities", listCities);
+router.get("/aqi/live", liveReading);
+router.get("/analytics/trends", trends);
+router.get("/analytics/comparison", comparison);
+router.post("/predict", predict);
+router.post("/chat", chat);

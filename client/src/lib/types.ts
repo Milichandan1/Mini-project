@@ -45,7 +45,7 @@ export interface TrendPoint {
 export interface PredictionPoint {
   hour: number;
   timestamp: string;
-  predictedPm25: number;
+  predictedPm25?: number;
   predictedAqi: number;
 }
 
@@ -56,39 +56,4 @@ export interface ComparisonPoint {
   pm25: number;
   pm10: number;
   category: AqiCategory;
-}
-
-export interface Destination {
-  id: string;
-  name: string;
-  country: string;
-  region: string;
-  category: string;
-  duration: string;
-  price: number;
-  rating: number;
-  coordinates: { lat: number; lng: number };
-  image: string;
-  summary: string;
-  highlights: string[];
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-export interface Booking {
-  _id: string;
-  destinationId: string;
-  destinationName: string;
-  travelDate: string;
-  guests: number;
-  fullName: string;
-  phone: string;
-  notes?: string;
-  totalPrice: number;
-  status: "confirmed" | "pending";
-  createdAt: string;
 }

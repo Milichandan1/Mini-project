@@ -15,7 +15,7 @@ from sklearn.preprocessing import StandardScaler
 from .features import CITY_INDEX, FEATURE_COLUMNS
 
 
-MODEL_PATH = Path(os.getenv("MODEL_PATH", "model/aqi_model.joblib"))
+MODEL_PATH = Path(os.getenv("MODEL_PATH", "model/pm25_model.joblib"))
 DATA_PATH = Path("data/historical_aqi.csv")
 
 
@@ -84,14 +84,16 @@ def generate_training_data(path: Path = DATA_PATH, days: int = 180) -> pd.DataFr
 
 def train_model() -> dict:
     frame = pd.read_csv(DATA_PATH) if DATA_PATH.exists() else generate_training_data()
+    frame["target_pm25"] = frame.groupby("city")["pm25"].shift(-1)
+    frame = frame.dropna(subset=["target_pm25"])
     x = frame[FEATURE_COLUMNS]
-    y = frame["aqi"]
+    y = frame["target_pm25"]
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
     pipeline = Pipeline(
         steps=[
             ("scaler", StandardScaler()),
-            ("model", RandomForestRegressor(n_estimators=220, min_samples_leaf=2, random_state=42, n_jobs=-1)),
+            ("model", RandomForestRegressor(n_estimators=260, min_samples_leaf=2, random_state=42, n_jobs=-1)),
         ]
     )
     pipeline.fit(x_train, y_train)
@@ -101,6 +103,7 @@ def train_model() -> dict:
     joblib.dump(pipeline, MODEL_PATH)
     return {
         "model_path": str(MODEL_PATH),
+        "target": "pm25",
         "rows": int(len(frame)),
         "mae": round(float(mean_absolute_error(y_test, predictions)), 2),
         "r2": round(float(r2_score(y_test, predictions)), 3),

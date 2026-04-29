@@ -49,7 +49,7 @@ export function TrendChart({ data }: { data: TrendPoint[] }) {
 export function PredictionChart({ data }: { data: PredictionPoint[] }) {
   return (
     <section className="dashboard-shell p-5">
-      <h3 className="section-title">AI prediction, next 48 hours</h3>
+      <h3 className="section-title">AI PM2.5 prediction, next 48 hours</h3>
       <div className="mt-4 h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
@@ -57,7 +57,7 @@ export function PredictionChart({ data }: { data: PredictionPoint[] }) {
             <XAxis dataKey="hour" tickFormatter={(value) => `${value}h`} />
             <YAxis />
             <Tooltip contentStyle={tooltipStyle} />
-            <Line type="monotone" dataKey="predictedAqi" stroke="#ff6b5f" strokeWidth={3} dot={false} />
+            <Line type="monotone" dataKey="predictedPm25" name="Predicted PM2.5" stroke="#ff6b5f" strokeWidth={3} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>

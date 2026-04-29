@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api } from "../lib/api";
+import { api, ApiError } from "../lib/api";
 import { ComparisonPoint, LiveReading, PredictionPoint, TrendPoint } from "../lib/types";
 
 export function useDashboardData(city: string) {
@@ -30,7 +30,13 @@ export function useDashboardData(city: string) {
       setComparison(nextComparison);
       setPrediction(nextPrediction);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load dashboard data");
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(`Unable to load dashboard data: ${err.message}`);
+      } else {
+        setError("Unable to load dashboard data.");
+      }
     } finally {
       setLoading(false);
     }

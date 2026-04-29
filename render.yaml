@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: voyage-travel-api
+    name: northeast-pollution-api
     env: node
     rootDir: server
     buildCommand: npm install
@@ -12,11 +12,15 @@ services:
         sync: false
       - key: MONGODB_URI
         sync: false
-      - key: JWT_SECRET
+      - key: OPENWEATHER_API_KEY
         sync: false
-      - key: RESEND_API_KEY
+      - key: WAQI_TOKEN
         sync: false
-      - key: CONTACT_EMAIL_TO
+      - key: ML_SERVICE_URL
         sync: false
-      - key: CONTACT_EMAIL_FROM
-        sync: false
+  - type: web
+    name: northeast-aqi-ml
+    env: python
+    rootDir: ml-service
+    buildCommand: pip install -r requirements.txt && python train_model.py
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT

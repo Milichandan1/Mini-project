@@ -23,9 +23,9 @@ export function Header({
   return (
     <header className="dashboard-shell flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-mint">Northeast Air Intelligence</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-mint">NE Air Monitor</p>
         <h1 className="mt-2 text-3xl font-black leading-tight text-ink dark:text-white sm:text-4xl">
-          Pollution command center
+          Pollution forecasting dashboard
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-zinc-600 dark:text-zinc-300">
           Live AQI, pollutant loads, weather signals, and 48-hour AI prediction for Northeast India.

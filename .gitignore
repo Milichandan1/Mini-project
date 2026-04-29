@@ -7,10 +7,12 @@ __pycache__
 *.pyc
 *.pkl
 *.joblib
-dev.log
-*-dev*.log
-.dev-pids
-.dev-jobids
 .venv
 venv
 .DS_Store
+*.log
+.dev-jobids
+.dev-pids
+
+.vercel
+ml-service/data
